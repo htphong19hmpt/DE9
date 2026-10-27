@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HÓA HỌC 12 - ĐỀ ÔN TẬP GIỮA HỌC KỲ I (ĐỀ SỐ 9)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Hỗ trợ KaTeX hiển thị công thức hóa học và toán học chuẩn xác -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+        body { font-family: 'Montserrat', sans-serif; }
+        .pulse-glow { animation: pulseGlow 2s infinite; }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.8); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 min-h-screen text-white flex flex-col items-center justify-between p-4 md:p-8">
+
+    <!-- Header -->
+    <header class="w-full max-w-4xl text-center my-4">
+        <div class="inline-block bg-blue-600 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-2 shadow-lg">
+            Trò Chơi Học Tập - Hóa học 12
+        </div>
+        <h1 class="text-xl md:text-3xl font-extrabold bg-gradient-to-r from-teal-200 via-blue-200 to-purple-200 bg-clip-text text-transparent">
+            ĐỀ ÔN TẬP GIỮA HỌC KỲ I - NĂM HỌC 2026-2027 (ĐỀ SỐ 9)
+        </h1>
+        <p class="text-slate-300 text-sm md:text-base mt-1">Ester - Lipid | Xà phòng & Chất giặt rửa | Carbohydrate</p>
+    </header>
+
+    <!-- Main Container -->
+    <main class="w-full max-w-4xl bg-slate-800/80 backdrop-blur-md rounded-2xl shadow-2xl border border-slate-700 p-6 md:p-8 my-auto relative overflow-hidden">
+
+        <!-- SETUP SCREEN -->
+        <div id="setup-screen" class="space-y-6">
+            <div class="text-center">
+                <h2 class="text-2xl font-bold text-teal-400 mb-2">Chọn Chế Độ Chơi</h2>
+                <p class="text-slate-300 text-sm">Đề kiểm tra chuẩn ma trận mới: Trắc nghiệm 4 lựa chọn, Đúng/Sai và Trả lời ngắn có hướng dẫn giải chi tiết!</p>
+            </div>
+
+            <!-- Mode Selector Buttons -->
+            <div class="flex justify-center space-x-4">
+                <button id="btn-mode-group" onclick="setGameMode('group')" class="px-6 py-2.5 rounded-xl font-bold text-sm bg-blue-600 text-white shadow-lg transition flex items-center space-x-2">
+                    <i class="fa-solid fa-users"></i> <span>Đấu Đội / Nhiều Người</span>
+                </button>
+                <button id="btn-mode-single" onclick="setGameMode('single')" class="px-6 py-2.5 rounded-xl font-bold text-sm bg-slate-700 text-slate-300 shadow-lg transition flex items-center space-x-2">
+                    <i class="fa-solid fa-user-graduate"></i> <span>Kiểm Tra Cá Nhân (Đấu đơn)</span>
+                </button>
+            </div>
+
+            <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-4 max-w-md mx-auto">
+                <h3 id="setup-subtitle" class="text-center font-semibold text-teal-300 text-sm">Thiết lập thông tin các đội chơi</h3>
+                <div id="participant-inputs" class="space-y-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-blue-600 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0">1</span>
+                        <input type="text" value="Đội 1" class="participant-input w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500 font-semibold text-sm" placeholder="Nhập tên...">
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-purple-600 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0">2</span>
+                        <input type="text" value="Đội 2" class="participant-input w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500 font-semibold text-sm" placeholder="Nhập tên...">
+                    </div>
+                </div>
+
+                <div id="add-team-box" class="flex justify-center pt-2">
+                    <button onclick="addParticipantInput()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg font-semibold text-xs transition flex items-center space-x-1">
+                        <i class="fa-solid fa-plus"></i> <span id="add-btn-text">Thêm đội</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="text-center pt-2">
+                <button onclick="startGame()" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-lg px-8 py-3 rounded-xl shadow-lg transform transition hover:scale-105">
+                    Bắt Đầu Ôn Tập Ngay!
+                </button>
+            </div>
+        </div>
+
+        <!-- GAMEPLAY SCREEN -->
+        <div id="game-screen" class="hidden space-y-6">
+            <div class="flex flex-wrap justify-between items-center bg-slate-900/60 p-4 rounded-xl border border-slate-700">
+                <div class="flex items-center space-x-3 mb-2 sm:mb-0">
+                    <span id="turn-label" class="text-xs uppercase tracking-wider text-slate-400">Thí sinh:</span>
+                    <span id="current-participant-badge" class="bg-blue-600 text-white font-bold px-3 py-1 rounded-full text-sm shadow">Bạn</span>
+                </div>
+                <div class="text-sm font-semibold text-teal-300">
+                    Câu hỏi <span id="current-q-num">1</span> / <span id="total-q-num">0</span>
+                </div>
+                <div class="flex items-center space-x-2 text-slate-400 font-medium text-xs sm:text-sm">
+                    <i class="fa-regular fa-clock text-teal-400"></i>
+                    <span>Tự do làm bài</span>
+                </div>
+            </div>
+
+            <div id="scoreboard-mini" class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center"></div>
+
+            <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-700 shadow-inner">
+                <div id="question-badge" class="inline-block text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded bg-teal-800 text-teal-200 mb-2"></div>
+                <h3 id="question-text" class="text-lg md:text-xl font-bold text-white leading-relaxed"></h3>
+            </div>
+
+            <div id="options-container" class="space-y-4"></div>
+        </div>
+
+        <!-- FEEDBACK SCREEN -->
+        <div id="feedback-screen" class="hidden space-y-6 text-center py-4">
+            <div id="feedback-icon" class="text-6xl mb-2"></div>
+            <h3 id="feedback-title" class="text-2xl font-bold"></h3>
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 text-left max-w-2xl mx-auto">
+                <p class="text-xs font-bold text-slate-400 uppercase mb-1">Hướng dẫn giải thích đáp án:</p>
+                <p id="feedback-rationale" class="text-slate-200 text-sm md:text-base leading-relaxed"></p>
+            </div>
+            <div>
+                <button onclick="nextQuestion()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-xl shadow-lg transition transform hover:scale-105">
+                    Tiếp Tục <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- END GAME SCREEN -->
+        <div id="end-screen" class="hidden space-y-6 text-center py-6">
+            <div class="text-6xl text-yellow-400 mb-2">
+                <i class="fa-solid fa-trophy animate-bounce"></i>
+            </div>
+            <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-500">
+                KẾT QUẢ BÀI THI TỔNG HỢP
+            </h2>
+            <p id="end-subtitle" class="text-slate-300">Đã hoàn thành toàn bộ câu hỏi!</p>
+
+            <div id="final-scoreboard" class="max-w-md mx-auto space-y-3"></div>
+
+            <div class="pt-4">
+                <button onclick="restartGame()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold px-8 py-3 rounded-xl shadow-lg transition transform hover:scale-105">
+                    Làm Lại Từ Đầu
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="w-full max-w-4xl text-center text-xs text-slate-400 my-2">
+        Trò chơi học tập Hóa học 12 - Đề ôn tập giữa HK1 (Năm học 2026-2027 - Đề số 9)
+    </footer>
+
+    <script>
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playCorrectSound() {
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+                const notes = [523.25, 659.25, 783.99];
+                notes.forEach((freq, index) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + index * 0.1);
+                    gain.gain.setValueAtTime(0.18, now + index * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.1 + 0.28);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now + index * 0.1);
+                    osc.stop(now + index * 0.1 + 0.28);
+                });
+            } catch (e) {}
+        }
+
+        function playIncorrectSound() {
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+                const freqs = [174.61, 138.59];
+                freqs.forEach((freq, index) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(freq, now + index * 0.15);
+                    gain.gain.setValueAtTime(0.2, now + index * 0.15);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.15 + 0.25);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now + index * 0.15);
+                    osc.stop(now + index * 0.15 + 0.25);
+                });
+            } catch (e) {}
+        }
+
+        function renderMath(container) {
+            if (window.renderMathInElement && container) {
+                renderMathInElement(container, {
+                    delimiters: [
+                        { left: "$$", right: "$$", display: true },
+                        { left: "$", right: "$", display: false },
+                        { left: "\\(", right: "\\)", display: false },
+                        { left: "\\[", right: "\\]", display: true }
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        // BỘ CÂU HỎI THEO ĐỀ ÔN TẬP GIỮA HK1 HÓA 12 - ĐỀ SỐ 9 (NĂM HỌC 2026-2027)
+        const originalQuestions = [
+            // ==================== PHẦN I: 18 CÂU TRẮC NGHIỆM NHIỀU LỰA CHỌN ====================
+            {
+                type: 'mcq', level: 'NB', lesson: 'Phần I: Trắc nghiệm 4 lựa chọn',
+                question: 'Câu 1: Thành phần chính của chất giặt rửa tổng hợp là:',
+                options: [
+                    { text: 'A. $(\\text{C}_{17}\\text{H}_{35}\\text{COO})_2\\text{Ca}$.', isCorrect: false },
+                    { text: 'B. $\\text{C}_{15}\\text{H}_{31}\\text{COONa}$.', isCorrect: false },
+                    { text: 'C. $\\text{C}_{17}\\text{H}_{35}\\text{COOK}$.', isCorrect: false },
+                    { text: 'D. $\\text{CH}_3[\\text{CH}_2]_{11}-\\text{C}_6\\text{H}_4-\\text{SO}_3\\text{Na}$.', isCorrect: true }
+                ],
+                rationale: 'Chất giặt rửa tổng hợp phổ biến thường là muối sodium alkylbenzene sulfonate dạng $\\text{CH}_3[\\text{CH}_2]_{11}-\\text{C}_6\\text{H}_4-\\text{SO}_3\\text{Na}$ hoặc muối alkylsulfate.'
+            },
+            {
+                type: 'mcq', level: 'VD', lesson: 'Phần I: Trắc nghiệm 4 lựa chọn',
+                question: 'Câu 2: Cho hỗn hợp gồm $27\\text{ gam}$ glucose và $9\\text{ gam}$ fructose phản ứng hoàn toàn với lượng dư dung dịch $\\text{AgNO}_3$ trong $\\text{NH}_3$, thu được $m\\text{ gam Ag}$. Giá trị của $m$ là:',
+                options: [
+                    { text: 'A. 172,8.', isCorrect: false },
+                    { text: 'B. 86,4.', isCorrect: false },
+                    { text: 'C. 21,6.', isCorrect: false },
+                    { text: 'D. 43,2.', isCorrect: true }
+                ],
+                rationale: 'Cả glucose và fructose (trong môi trường kiềm $\\text{NH}_3$) đều tráng bạc với tỉ lệ $1 : 2\\text{ Ag}$.<br>' +
+                          '$n_{\\text{glucose}} = 27 / 180 = 0,15\\text{ mol}$; $n_{\\text{fructose}} = 9 / 180 = 0,05\\text{ mol}$.<br>' +
+                          '$\\implies n_{\\text{Ag}} = 2 \\times (0,15 + 0,05) = 0,4\\text{ mol} \\implies m_{\\text{Ag}} = 0,4 \\times 108 = 43,2\\text{ gam}$.'
+            },
+            {
+                type: 'mcq', level: 'NB', lesson: 'Phần I: Trắc nghiệm 4 lựa chọn',
+                question: 'Câu 3: Tinh bột, cellulose, saccharose đều có khả năng tham gia phản ứng:',
+                options: [
+                    { text: 'A. hòa tan $\\text{Cu(OH)}_2$.', isCorrect: false },
+                    { text: 'B. trùng ngưng.', isCorrect: false },
+                    { text: 'C. thủy phân.', isCorrect: true },
+                    { text: 'D. tráng gương.', isCorrect: false }
+                ],
+                rationale: 'Saccharose (disaccharide), tinh bột và cellulose (polysaccharide) đều bị thủy phân trong môi trường acid hoặc có enzyme thích hợp tạo thành monosaccharide.'
+            },
+            {
+                type: 'mcq', level: 'NB', lesson: 'Phần I: Trắc nghiệm 4 lựa chọn',
+                question: 'Câu 4: Chất nào sau đây là acid béo?',
+                options: [
+                    { text: 'A. Palmitic acid.', isCorrect: true },
+                    { text: 'B. Acetic acid.', isCorrect: false },
+                    { text: 'C. Formic acid.', isCorrect: false },
+                    { text: 'D. Propionic acid.', isCorrect: false }
+                ],
+                rationale: 'Palmitic acid ($\\text{C}_{15}\\text{H}_{31}\\text{COOH}$) là acid béo no, mạch dài không phân nhánh có 16 nguyên tử carbon.'
+            },
+            {
+                type: 'mcq', level: 'NB', lesson: 'Phần I: Trắc nghiệm 4 lựa chọn',
+                question: 'Câu 5: Hợp chất nào dưới đây được sử dụng làm xà phòng?',
+                options: [
+                    { text: 'A. $\\text{CH}_3\\text{COONa}$.', isCorrect: false },
+                    { text: 'B. $\\text{CH}_3(\\text{CH}_2)_5\\text{O}(\\text{CH}_2)_5\\text{CH}_3$.', isCorrect: false },
+                    { text: 'C. $\\text{CH}_3(\\text{CH}_2)_{12}\\text{COOCH}_3$.', isCorrect: false },
+                    { text: 'D. $\\text{CH}_3(\\text{CH}_2)_{14}\\text{COONa}$.', isCorrect: true }
+                ],
+                rationale: 'Xà phòng là muối sodium hoặc potassium của acid béo, ví dụ sodium palmitate $\\text{CH}_3(\\text{CH}_2)_{14}\\text{COONa}$ ($\\text{C}_{15}\\text{H}_{31}\\text{COONa}$).'
+            },
+            {
+                type: 'mcq', level: 'NB', lesson: 'Phần I: Trắc nghiệm 4 lựa chọn',
+                question: 'Câu 6: Khi nhỏ dung dịch iodine vào chuối xanh thì xuất hiện màu:',
+                options: [
+                    { text: 'A. xanh tím.', isCorrect: true },
+                    { text: 'B. đỏ.', isCorrect: false },
+                    { text: 'C. vàng.', isCorrect: false },
+                    { text: 'D. xanh lá.', isCorrect: false }
+                ],
+                rationale: 'Chuối xanh chứa nhiều tinh bột, hấp phụ iodine tạo hợp chất có màu xanh tím đặc trưng.'
+            },
+            {
+                type: 'mcq', level: 'TH', lesson: 'Phần I: Trắc nghiệm 4 lựa chọn',
+                question: 'Câu 7: Cho các phát biểu sau:<br>' +
+                          '(a) Xà phòng là muối sodium hoặc potassium của các acid béo.<br>' +
+                          '(b) Các triglyceride đều có phản ứng cộng hydrogen.<br>' +
+                          '(c) Phản ứng thủy phân chất béo trong môi trường kiềm là phản ứng một chiều.<br>' +
+                          '(d) Chất béo nhẹ hơn nước và không tan trong nước.<br>' +
+                          'Số phát biểu đúng là:',
+                options: [
+                    { text: 'A. 4.', isCorrect: false },
+                    { text: 'B. 2.', isCorrect: false },
+                    { text: 'C. 1.', isCorrect: false },
+                    { text: 'D. 3.', isCorrect: true }
+                ],
+                rationale: '- (a) Đúng theo định nghĩa xà phòng.<br>' +
+                          '- (b) Sai vì chỉ triglyceride không no mới có phản ứng cộng $\\text{H}_2$; triglyceride no (như tristearin, tripalmitin) không phản ứng.<br>' +
+                          '- (c) Đúng (phản ứng xà phòng hóa là một chiều).<br>' +
+                          '- (d) Đúng.<br>' +
+                          'Vậy có 3 phát biểu đúng: (a), (c), (d).'
+            },
+            {
+                type: 'mcq', level: 'NB', lesson: 'Phần I: Trắc nghiệm 4 lựa chọn',
+                question: 'Câu 8: Một số ester được dùng trong hương liệu, mĩ phẩm, bột giặt là nhờ các ester:',
+                options: [
+                    { text: 'A. có thể bay hơi nhanh sau khi sử dụng.', isCorrect: false },
+                    { text: 'B. có mùi thơm, an toàn với người.', isCorrect: true },
+                    { text: 'C. là chất lỏng dễ bay hơi.', isCorrect: false },
+                    { text: 'D. đều có nguồn gốc từ thiên nhiên.', isCorrect: false }
+                ],
+                rationale: 'Nhiều ester có mùi thơm của hoa quả chín, hoa thơm tự nhiên và không độc hại nên được dùng làm chất tạo hương.'
+            },
+            {
+                type: 'mcq', level: 'NB', lesson: 'Phần I: Trắc nghiệm 4 lựa chọn',
+                question: 'Câu 9: Chất nào sau đây có nhiều trong bông nõn (chiếm khoảng $95 - 98\\%$)?',
+                options: [
+                    { text: 'A. Cellulose.', isCorrect: true },
+                    { text: 'B. Glucose.', isCorrect: false },
+                    { text: 'C. Tinh bột.', isCorrect: false },
+                    { text: 'D. Saccharose.', isCorrect: false }
+                ],
+                rationale: 'Sợi bông nõn chứa hàm lượng cellulose tinh khiết cao nhất trong tự nhiên (khoảng $95 - 98\\%$).'
+            },
+            {
+                type: 'mcq', level: 'TH', lesson: 'Phần I: Trắc nghiệm 4 lựa chọn',
+                question: 'Câu 10: Tiến hành thí nghiệm:<br>' +
+                          '- <b>Bước 1:</b> Cho 5 giọt dung dịch $\\text{CuSO}_4\\, 0,5\\%$ vào ống nghiệm.<br>' +
+                          '- <b>Bước 2:</b> Thêm $1\\text{ mL}$ dung dịch $\\text{NaOH } 10\\%$ vào ống nghiệm, lắc đều gạn phần dung dịch giữ lại kết tủa.<br>' +
+                          '- <b>Bước 3:</b> Thêm tiếp $2\\text{ mL}$ dung dịch glucose $1\\%$ vào ống nghiệm, lắc đều.<br>' +
+                          'Chọn nhận định SAI:',
+                options: [
+                    { text: 'A. Ở bước 3, glucose bị oxi hóa thành gluconic acid.', isCorrect: true },
+                    { text: 'B. Thí nghiệm chứng minh, glucose có nhiều nhóm -OH ở vị trí kề nhau.', isCorrect: false },
+                    { text: 'C. Ở bước 2, trong ống nghiệm xuất hiện kết tủa màu xanh.', isCorrect: false },
+                    { text: 'D. Sau bước 3, kết tủa đã bị hòa tan, thu được dung dịch màu xanh lam.', isCorrect: false }
+                ],
+                rationale: 'Ở bước 3, phản ứng xảy ra ở nhiệt độ phòng là phản ứng tạo phức đồng của polyalcohol (không phải phản ứng oxi hóa - khử). Glucose chỉ bị oxi hóa thành muối gluconate khi đun nóng với $\\text{Cu(OH)}_2$ trong kiềm. Do đó nhận định A là SAI.'
+            },
+            {
+                type: 'mcq', level: 'NB', lesson: 'Phần I: Trắc nghiệm 4 lựa chọn',
+                question: 'Câu 11: Chất nào sau đây có khả năng tham gia phản ứng tráng gương?',
+                options: [
+                    { text: 'A. Tinh bột.', isCorrect: false },
+                    { text: 'B. Glucose.', isCorrect: true },
+                    { text: 'C. Saccharose.', isCorrect: false },
+                    { text: 'D. Cellulose.', isCorrect: false }
+                ],
+                rationale: 'Glucose mạch hở có nhóm aldehyde ($-\\text{CHO}$) nên có tính khử, tham gia phản ứng tráng gương tạo lớp bạc kim loại.'
+            },
+            {
+                type: 'mcq', level: 'NB', lesson: 'Phần I: Trắc nghiệm 4 lựa chọn',
+                question: 'Câu 12: Carbohydrate nào sau đây chiếm thành phần chính trong các loại hạt như gạo, ngô, lúa mì, lúa mạch?',
+                options: [
+                    { text: 'A. Tinh bột.', isCorrect: true },
+                    { text: 'B. Glucose.', isCorrect: false },
+                    { text: 'C. Saccharose.', isCorrect: false },
+                    { text: 'D. Cellulose.', isCorrect: false }
+                ],
+                rationale: 'Tinh bột là chất dinh dưỡng dự trữ chính trong các loại ngũ cốc, củ và hạt.'
+            },
+            {
+                type: 'mcq', level: 'NB', lesson: 'Phần I: Trắc nghiệm 4 lựa chọn',
+                question: 'Câu 13: Chất thuộc loại disaccharide là:',
+                options: [
+                    { text: 'A. fructose.', isCorrect: false },
+                    { text: 'B. glucose.', isCorrect: false },
+                    { text: 'C. saccharose.', isCorrect: true },
+                    { text: 'D. cellulose.', isCorrect: false }
+                ],
+                rationale: 'Saccharose và maltose là các disaccharide (cấu tạo từ hai gốc monosaccharide).'
+            },
+            {
+                type: 'mcq', level: 'TH', lesson: 'Phần I: Trắc nghiệm 4 lựa chọn',
+                question: 'Câu 14: Chất X là chất dinh dưỡng, được dùng làm thuốc tăng lực cho người già, trẻ nhỏ và người ốm. Trong công nghiệp, X được điều chế bằng cách thủy phân chất Y. Chất Y là nguyên liệu để làm bánh kẹo, nước giải khát. Tên gọi của X, Y lần lượt là:',
+                options: [
+                    { text: 'A. fructose và glucose.', isCorrect: false },
+                    { text: 'B. glucose và cellulose.', isCorrect: false },
+                    { text: 'C. saccharose và tinh bột.', isCorrect: false },
+                    { text: 'D. glucose và saccharose.', isCorrect: true }
+                ],
+                rationale: 'Chất dinh dưỡng tăng lực truyền tĩnh mạch là glucose (X); thủy phân saccharose (Y, đường mía làm bánh kẹo) thu được glucose và fructose.'
+            },
+            {
+                type: 'mcq', level: 'NB', lesson: 'Phần I: Trắc nghiệm 4 lựa chọn',
+                question: 'Câu 15: Ester no, đơn chức, mạch hở có công thức tổng quát là:',
+                options: [
+                    { text: 'A. $\\text{C}_n\\text{H}_{2n}\\text{O}_2\\;(n \\ge 2)$.', isCorrect: true },
+                    { text: 'B. $\\text{C}_n\\text{H}_{2n+2}\\text{O}_2\\;(n \\ge 2)$.', isCorrect: false },
+                    { text: 'C. $\\text{C}_n\\text{H}_{2n}\\text{O}\\;(n \\ge 2)$.', isCorrect: false },
+                    { text: 'D. $\\text{C}_n\\text{H}_{2n-2}\\text{O}_2\\;(n \\ge 2)$.', isCorrect: false }
+                ],
+                rationale: 'Ester no, đơn chức, mạch hở có 1 liên kết $\\pi$ ở nhóm $-\\text{COO}-$ nên công thức chung là $\\text{C}_n\\text{H}_{2n}\\text{O}_2\\;(n \\ge 2)$.'
+            },
+            {
+                type: 'mcq', level: 'NB', lesson: 'Phần I: Trắc nghiệm 4 lựa chọn',
+                question: 'Câu 16: Tên gọi của ester $\\text{CH}_3\\text{COOCH}_3$ là:',
+                options: [
+                    { text: 'A. methyl acetate.', isCorrect: true },
+                    { text: 'B. methyl propionate.', isCorrect: false },
+                    { text: 'C. ethyl acetate.', isCorrect: false },
+                    { text: 'D. ethyl formate.', isCorrect: false }
+                ],
+                rationale: 'Gốc $-\\text{CH}_3$ là methyl và gốc $\\text{CH}_3\\text{COO}-$ là acetate $\\implies$ methyl acetate.'
+            },
+            {
+                type: 'mcq', level: 'TH', lesson: 'Phần I: Trắc nghiệm 4 lựa chọn',
+                question: 'Câu 17: Thuốc thử nào sau đây có thể dùng để phân biệt 2 dung dịch glucose và fructose?',
+                options: [
+                    { text: 'A. Na kim loại.', isCorrect: false },
+                    { text: 'B. $\\text{AgNO}_3/\\text{NH}_3$.', isCorrect: false },
+                    { text: 'C. Nước $\\text{Br}_2$.', isCorrect: true },
+                    { text: 'D. $\\text{Cu(OH)}_2/\\text{OH}^-$.', isCorrect: false }
+                ],
+                rationale: 'Glucose làm mất màu nước bromine (oxi hóa nhóm $-\\text{CHO}$ thành acid gluconic), trong khi fructose trong môi trường acid của nước bromine không chuyển thành glucose nên không làm mất màu.'
+            },
+            {
+                type: 'mcq', level: 'NB', lesson: 'Phần I: Trắc nghiệm 4 lựa chọn',
+                question: 'Câu 18: Hoá chất chủ đạo trong ngành công nghiệp sản xuất xà phòng là:',
+                options: [
+                    { text: 'A. $\\text{NaOH}$.', isCorrect: true },
+                    { text: 'B. $\\text{NaCl}$.', isCorrect: false },
+                    { text: 'C. $\\text{Mg(NO}_3)_2$.', isCorrect: false },
+                    { text: 'D. $\\text{K}_2\\text{SO}_4$.', isCorrect: false }
+                ],
+                rationale: 'Kiềm $\\text{NaOH}$ (hoặc $\\text{KOH}$) dùng để xà phòng hóa chất béo trong sản xuất xà phòng.'
+            },
+
+            // ==================== PHẦN II: 4 CÂU ĐÚNG / SAI (16 Ý) ====================
+            {
+                type: 'tf', level: 'NB', lesson: 'Phần II: Câu hỏi Đúng/Sai',
+                question: 'Câu 19: Isopropyl formate là một ester có trong cà phê Arabica (còn gọi là cà phê chè):<br><br>' +
+                          '<b>Ý a:</b> Công thức của isopropyl formate là $\\text{HCOOCH(CH}_3)_2$.<br>' +
+                          '<b>Ý này là ĐÚNG hay SAI?</b>',
+                correctBool: true,
+                rationale: 'Gốc formate là $\\text{HCOO}-$ và gốc isopropyl là $-\\text{CH(CH}_3)_2 \\implies \\text{HCOOCH(CH}_3)_2$. Nhận định này là ĐÚNG.'
+            },
+            {
+                type: 'tf', level: 'TH', lesson: 'Phần II: Câu hỏi Đúng/Sai',
+                question: 'Câu 19: Xét cấu tạo của isopropyl formate:<br><br>' +
+                          '<b>Ý b:</b> Isopropyl formate là ester không no (có 1 liên kết $\\text{C}=\\text{C}$), đơn chức, mạch hở.<br>' +
+                          '<b>Ý này là ĐÚNG hay SAI?</b>',
+                correctBool: false,
+                rationale: 'Gốc isopropyl là no, phân tử $\\text{HCOOCH(CH}_3)_2$ no, không chứa liên kết đôi $\\text{C}=\\text{C}$. Nhận định này là SAI.'
+            },
+            {
+                type: 'tf', level: 'TH', lesson: 'Phần II: Câu hỏi Đúng/Sai',
+                question: 'Câu 19: Xét đồng phân của isopropyl formate:<br><br>' +
+                          '<b>Ý c:</b> Isopropyl formate là đồng phân của ethyl acetate.<br>' +
+                          '<b>Ý này là ĐÚNG hay SAI?</b>',
+                correctBool: true,
+                rationale: 'Cả isopropyl formate ($\\text{HCOOCH(CH}_3)_2$) và ethyl acetate ($\\text{CH}_3\\text{COOC}_2\\text{H}_5$) đều có công thức phân tử là $\\text{C}_4\\text{H}_8\\text{O}_2$. Nhận định này là ĐÚNG.'
+            },
+            {
+                type: 'tf', level: 'VD', lesson: 'Phần II: Câu hỏi Đúng/Sai',
+                question: 'Câu 19: Xét thành phần nguyên tố của isopropyl formate:<br><br>' +
+                          '<b>Ý d:</b> Phần trăm khối lượng oxygen trong isopropyl formate là $36,36\\%$.<br>' +
+                          '<b>Ý này là ĐÚNG hay SAI?</b>',
+                correctBool: true,
+                rationale: 'Phân tử khối của $\\text{C}_4\\text{H}_8\\text{O}_2$ là $M = 88$. $\\%O = \\dfrac{32}{88} \\times 100\\% \\approx 36,36\\%$. Nhận định trong đề gốc là $36,36\\%$ (nếu đề ghi $37,5\\%$ thì là Sai). Theo bảng đáp án đề thi, nhận định này là ĐÚNG.'
+            },
+
+            {
+                type: 'tf', level: 'NB', lesson: 'Phần II: Câu hỏi Đúng/Sai',
+                question: 'Câu 20: Xét cấu tạo và thành phần của xà phòng:<br><br>' +
+                          '<b>Ý a:</b> Công thức của sodium palmitate và sodium stearate lần lượt là: $\\text{C}_{15}\\text{H}_{31}\\text{COONa}$ và $\\text{C}_{17}\\text{H}_{33}\\text{COONa}$.<br>' +
+                          '<b>Ý này là ĐÚNG hay SAI?</b>',
+                correctBool: false,
+                rationale: 'Sodium stearate là $\\text{C}_{17}\\text{H}_{35}\\text{COONa}$; còn $\\text{C}_{17}\\text{H}_{33}\\text{COONa}$ là sodium oleate. Nhận định này là SAI.'
+            },
+            {
+                type: 'tf', level: 'TH', lesson: 'Phần II: Câu hỏi Đúng/Sai',
+                question: 'Câu 20: Xét cấu tạo phân tử xà phòng:<br><br>' +
+                          '<b>Ý b:</b> Muối của acid béo được cấu tạo gồm một phần ưa nước nối với một phần kị nước. Phần ưa nước (tan được trong nước) là nhóm carboxylate $-\\text{COO}^-$; phần kị nước (không tan trong nước) là các gốc hydrocarbon mạch dài, như $\\text{C}_{15}\\text{H}_{31}-$, $\\text{C}_{17}\\text{H}_{35}-$,...<br>' +
+                          '<b>Ý này là ĐÚNG hay SAI?</b>',
+                correctBool: true,
+                rationale: 'Đây là cấu trúc lưỡng ái chuẩn xác của chất hoạt động bề mặt xà phòng. Nhận định này là ĐÚNG.'
+            },
+            {
+                type: 'tf', level: 'NB', lesson: 'Phần II: Câu hỏi Đúng/Sai',
+                question: 'Câu 20: Xét ưu điểm môi trường của xà phòng:<br><br>' +
+                          '<b>Ý c:</b> Ưu điểm của xà phòng là có thể bị phân hủy bởi các vi sinh vật nên ít gây ô nhiễm môi trường.<br>' +
+                          '<b>Ý này là ĐÚNG hay SAI?</b>',
+                correctBool: true,
+                rationale: 'Muối acid béo có mạch carbon không phân nhánh dễ bị vi sinh vật phân hủy sinh học, bảo vệ môi trường nước. Nhận định này là ĐÚNG.'
+            },
+            {
+                type: 'tf', level: 'TH', lesson: 'Phần II: Câu hỏi Đúng/Sai',
+                question: 'Câu 20: Xét cơ chế giặt rửa của xà phòng:<br><br>' +
+                          '<b>Ý d:</b> Phân tử xà phòng có khả năng xâm nhập vào vết bẩn dầu mỡ nhờ gốc ưa nước ($-\\text{COO}^-$). Kết quả là các phân tử dầu mỡ bị xà phòng cuốn khỏi vết bẩn.<br>' +
+                          '<b>Ý này là ĐÚNG hay SAI?</b>',
+                correctBool: false,
+                rationale: 'Phân tử xà phòng xâm nhập vào vết bẩn dầu mỡ nhờ phần đuôi hydrocarbon kị nước (ưa dầu mỡ), còn đầu ưa nước quay ra ngoài môi trường nước. Nhận định này là SAI.'
+            },
+
+            {
+                type: 'tf', level: 'TH', lesson: 'Phần II: Câu hỏi Đúng/Sai',
+                question: 'Câu 21: Tiến hành thí nghiệm tráng bạc:<br>' +
+                          '- Bước 1: Cho $1\\text{ mL}$ dung dịch $\\text{AgNO}_3\\, 1\\%$ vào ống nghiệm sạch.<br>' +
+                          '- Bước 2: Thêm từ từ từng giọt dung dịch $\\text{NH}_3$, lắc đều cho đến khi kết tủa tan hết.<br>' +
+                          '- Bước 3: Thêm tiếp khoảng $1\\text{ mL}$ dung dịch glucose $1\\%$, đun nóng nhẹ.<br><br>' +
+                          '<b>Ý a:</b> Sản phẩm hữu cơ thu được sau bước 3 là ammonium gluconate.<br>' +
+                          '<b>Ý này là ĐÚNG hay SAI?</b>',
+                correctBool: true,
+                rationale: 'Phương trình: $\\text{CH}_2\\text{OH}[\\text{CHOH}]_4\\text{CHO} + 2[\\text{Ag(NH}_3)_2]\\text{OH} \\xrightarrow{t^\\circ} \\text{CH}_2\\text{OH}[\\text{CHOH}]_4\\text{COONH}_4 + 2\\text{Ag}\\downarrow + 3\\text{NH}_3 + \\text{H}_2\\text{O}$. Nhận định này là ĐÚNG.'
+            },
+            {
+                type: 'tf', level: 'NB', lesson: 'Phần II: Câu hỏi Đúng/Sai',
+                question: 'Câu 21: Xét hiện tượng thí nghiệm tráng bạc glucose:<br><br>' +
+                          '<b>Ý b:</b> Sau bước 3, có lớp bạc kim loại bám trên thành ống nghiệm.<br>' +
+                          '<b>Ý này là ĐÚNG hay SAI?</b>',
+                correctBool: true,
+                rationale: 'Bạc kim loại sinh ra bám sáng bóng trên thành ống nghiệm. Nhận định này là ĐÚNG.'
+            },
+            {
+                type: 'tf', level: 'TH', lesson: 'Phần II: Câu hỏi Đúng/Sai',
+                question: 'Câu 21: Xét phản ứng khi thay bằng saccharose:<br><br>' +
+                          '<b>Ý c:</b> Nếu thay glucose bằng saccharose thì hiện tượng xảy ra tương tự.<br>' +
+                          '<b>Ý này là ĐÚNG hay SAI?</b>',
+                correctBool: false,
+                rationale: 'Saccharose không có nhóm -OH hemiacetal/hemiketal tự do nên không mở vòng tạo nhóm aldehyde, không tráng bạc. Nhận định này là SAI.'
+            },
+            {
+                type: 'tf', level: 'TH', lesson: 'Phần II: Câu hỏi Đúng/Sai',
+                question: 'Câu 21: Xét ý nghĩa chứng minh cấu tạo của thí nghiệm tráng bạc:<br><br>' +
+                          '<b>Ý d:</b> Thí nghiệm trên chứng minh glucose có tính chất của polyalcohol.<br>' +
+                          '<b>Ý này là ĐÚNG hay SAI?</b>',
+                correctBool: false,
+                rationale: 'Phản ứng tráng bạc chứng minh glucose có nhóm chức aldehyde ($-\\text{CHO}$), không phải chứng minh tính chất polyalcohol. Nhận định này là SAI.'
+            },
+
+            {
+                type: 'tf', level: 'NB', lesson: 'Phần II: Câu hỏi Đúng/Sai',
+                question: 'Câu 22: Xét về cấu tạo của tinh bột và cellulose:<br><br>' +
+                          '<b>Ý a:</b> Tinh bột và cellulose đều được tạo thành từ các đơn vị glucose.<br>' +
+                          '<b>Ý này là ĐÚNG hay SAI?</b>',
+                correctBool: true,
+                rationale: 'Tinh bột cấu tạo từ các gốc $\\alpha$-glucose; cellulose cấu tạo từ các gốc $\\beta$-glucose. Nhận định này là ĐÚNG.'
+            },
+            {
+                type: 'tf', level: 'NB', lesson: 'Phần II: Câu hỏi Đúng/Sai',
+                question: 'Câu 22: Xét quá trình tạo thành tinh bột:<br><br>' +
+                          '<b>Ý b:</b> Trong cây xanh, tinh bột được tạo thành nhờ quá trình quang hợp.<br>' +
+                          '<b>Ý này là ĐÚNG hay SAI?</b>',
+                correctBool: true,
+                rationale: '$6n\\text{CO}_2 + 5n\\text{H}_2\\text{O} \\xrightarrow{\\text{ánh sáng, diệp lục}} (\\text{C}_6\\text{H}_{10}\\text{O}_5)_n + 6n\\text{O}_2$. Nhận định này là ĐÚNG.'
+            },
+            {
+                type: 'tf', level: 'NB', lesson: 'Phần II: Câu hỏi Đúng/Sai',
+                question: 'Câu 22: Xét trạng thái tự nhiên của tinh bột:<br><br>' +
+                          '<b>Ý c:</b> Trong tự nhiên, tinh bột có nhiều trong lúa, ngô, khoai, sắn...<br>' +
+                          '<b>Ý này là ĐÚNG hay SAI?</b>',
+                correctBool: true,
+                rationale: 'Tinh bột là chất dinh dưỡng dự trữ dồi dào trong các hạt ngũ cốc và củ. Nhận định này là ĐÚNG.'
+            },
+            {
+                type: 'tf', level: 'NB', lesson: 'Phần II: Câu hỏi Đúng/Sai',
+                question: 'Câu 22: Xét tính chất vật lí của monosaccharide:<br><br>' +
+                          '<b>Ý d:</b> Cả glucose và fructose đều là chất rắn, dễ tan trong nước, có vị ngọt.<br>' +
+                          '<b>Ý này là ĐÚNG hay SAI?</b>',
+                correctBool: true,
+                rationale: 'Đây là các tính chất vật lí chung của các monosaccharide. Nhận định này là ĐÚNG.'
+            },
+
+            // ==================== PHẦN III: 6 CÂU TRẢ LỜI NGẮN ====================
+            {
+                type: 'sa', level: 'TH', lesson: 'Phần III: Trả lời ngắn',
+                question: 'Câu 23: Cho các chất sau:<br>' +
+                          '(1) $\\text{CH}_3[\\text{CH}_2]_{10}\\text{CH}_2\\text{OSO}_3\\text{Na}$;<br>' +
+                          '(2) $\\text{CH}_3[\\text{CH}_2]_{14}\\text{COONa}$;<br>' +
+                          '(3) $\\text{CH}_3[\\text{CH}_2]_{11}-\\text{C}_6\\text{H}_4-\\text{SO}_3\\text{Na}$;<br>' +
+                          '(4) $\\text{CH}_3\\text{CH}_2\\text{COONa}$;<br>' +
+                          '(5) $\\text{CH}_3[\\text{CH}_2]_{16}\\text{COOK}$;<br>' +
+                          '(6) $\\text{CH}_3[\\text{CH}_2]_{18}\\text{COONa}$.<br>' +
+                          'Số chất có thể là thành phần chính của xà phòng là bao nhiêu?',
+                correctAnswer: '3',
+                rationale: 'Thành phần chính của xà phòng là muối sodium hoặc potassium của các acid béo (mạch carbon dài từ $12 - 24\\text{ C}$ không phân nhánh).<br>' +
+                          'Gồm 3 chất:<br>' +
+                          '- (2) $\\text{CH}_3[\\text{CH}_2]_{14}\\text{COONa}$ (sodium palmitate);<br>' +
+                          '- (5) $\\text{CH}_3[\\text{CH}_2]_{16}\\text{COOK}$ (potassium stearate);<br>' +
+                          '- (6) $\\text{CH}_3[\\text{CH}_2]_{18}\\text{COONa}$ (sodium arachidate).<br>' +
+                          '(1) và (3) là chất giặt rửa tổng hợp; (4) mạch carbon quá ngắn không có tính giặt rửa.'
+            },
+            {
+                type: 'sa', level: 'VD', lesson: 'Phần III: Trả lời ngắn',
+                question: 'Câu 24: Xà phòng hóa hoàn toàn triglyceride X trong dung dịch $\\text{NaOH}$ dư, thu được glycerol, sodium oleate ($\\text{C}_{17}\\text{H}_{33}\\text{COONa}$), sodium stearate ($\\text{C}_{17}\\text{H}_{35}\\text{COONa}$) và sodium palmitate ($\\text{C}_{15}\\text{H}_{31}\\text{COONa}$). Phân tử khối của X là bao nhiêu?',
+                correctAnswer: '860',
+                rationale: 'Phân tử X có 3 gốc acid béo khác nhau: oleate ($M = 281$), stearate ($M = 283$), palmitate ($M = 255$) liên kết với gốc glyceryl $-\\text{C}_3\\text{H}_5$ ($M = 41$).<br>' +
+                          'Công thức phân tử của X là $\\text{C}_{55}\\text{H}_{102}\\text{O}_6$.<br>' +
+                          '$M_X = 281 + 283 + 255 + 41 = 860\\text{ amu}$.'
+            },
+            {
+                type: 'sa', level: 'TH', lesson: 'Phần III: Trả lời ngắn',
+                question: 'Câu 25: Cho dãy các carbohydrate sau: glucose, saccharose, cellulose, fructose, tinh bột, maltose. Số carbohydrate có phản ứng thủy phân là bao nhiêu?',
+                correctAnswer: '4',
+                rationale: 'Các carbohydrate tham gia phản ứng thủy phân gồm disaccharide và polysaccharide:<br>' +
+                          '1. Saccharose<br>' +
+                          '2. Cellulose<br>' +
+                          '3. Tinh bột<br>' +
+                          '4. Maltose.<br>' +
+                          '(Glucose và fructose là monosaccharide nên không bị thủy phân). Vậy có 4 chất.'
+            },
+            {
+                type: 'sa', level: 'VDC', lesson: 'Phần III: Trả lời ngắn',
+                question: 'Câu 26: Ethanol có thể được sản xuất từ tinh bột để pha chế xăng E5 (chứa $5\\%$ ethanol về thể tích). Lượng ethanol thu được từ $1\\text{ tấn}$ củ mì (chứa $45\\%$ tinh bột, phần còn lại là chất trơ) có thể dùng để pha chế bao nhiêu lít xăng E5? Biết hiệu suất quá trình sản xuất ethanol từ tinh bột là $50\\%$ và khối lượng riêng của ethanol là $0,8\\text{ g/mL}$. (Làm tròn đến hàng đơn vị)',
+                correctAnswer: '3194',
+                rationale: '$m_{\\text{tinh bột}} = 1000 \\times 45\\% = 450\\text{ kg}$.<br>' +
+                          'Sơ đồ phản ứng: $(\\text{C}_6\\text{H}_{10}\\text{O}_5)_n \\rightarrow n\\text{C}_6\\text{H}_{12}\\text{O}_6 \\rightarrow 2n\\text{C}_2\\text{H}_5\\text{OH}$.<br>' +
+                          'Cứ $162\\text{ kg}$ tinh bột theo lí thuyết sinh ra $92\\text{ kg}$ ethanol.<br>' +
+                          '$m_{\\text{ethanol thực tế}} = \\dfrac{450 \\times 92}{162} \\times 50\\% \\approx 127,778\\text{ kg} = 127.778\\text{ gam}$.<br>' +
+                          'Thể tích ethanol thu được: $V_{\\text{ethanol}} = \\dfrac{127.778}{0,8} = 159.722\\text{ mL} \\approx 159,722\\text{ lít}$.<br>' +
+                          'Thể tích xăng E5 pha chế được: $V_{\\text{xăng E5}} = \\dfrac{159,722}{5\\%} \\approx 3194,4\\text{ lít} \\approx 3194\\text{ lít}$.'
+            },
+            {
+                type: 'sa', level: 'TH', lesson: 'Phần III: Trả lời ngắn',
+                question: 'Câu 27: Cho các hợp chất có công thức như sau: $\\text{CH}_3\\text{COOC}_2\\text{H}_5$; $\\text{HCOOCH}_3$; $\\text{CH}_3\\text{COOH}$; $\\text{HCOOC}_2\\text{H}_5$; $\\text{C}_6\\text{H}_5\\text{COOCH}_3$ và $\\text{HOCH}_2\\text{CH}_2\\text{CHO}$. Số hợp chất ester là bao nhiêu?',
+                correctAnswer: '4',
+                rationale: 'Các ester trong dãy gồm:<br>' +
+                          '1. Ethyl acetate ($\\text{CH}_3\\text{COOC}_2\\text{H}_5$)<br>' +
+                          '2. Methyl formate ($\\text{HCOOCH}_3$)<br>' +
+                          '3. Ethyl formate ($\\text{HCOOC}_2\\text{H}_5$)<br>' +
+                          '4. Methyl benzoate ($\\text{C}_6\\text{H}_5\\text{COOCH}_3$).<br>' +
+                          '($\\text{CH}_3\\text{COOH}$ là carboxylic acid; $\\text{HOCH}_2\\text{CH}_2\\text{CHO}$ là hydroxy aldehyde). Vậy có 4 chất.'
+            },
+            {
+                type: 'sa', level: 'NB', lesson: 'Phần III: Trả lời ngắn',
+                question: 'Câu 28: Cho các carbohydrate: Glucose, Fructose, Cellulose, Maltose, Tinh bột. Số chất là monosaccharide là bao nhiêu?',
+                correctAnswer: '2',
+                rationale: 'Các monosaccharide trong dãy là: Glucose và Fructose (gồm 2 chất).'
+            }
+        ];
+
+        let questions = [];
+        let participants = [];
+        let gameMode = 'group';
+        let currentIndex = 0;
+        let currentQuestionIndex = 0;
+
+        function setGameMode(mode) {
+            gameMode = mode;
+            const btnGroup = document.getElementById('btn-mode-group');
+            const btnSingle = document.getElementById('btn-mode-single');
+            const subtitle = document.getElementById('setup-subtitle');
+            const container = document.getElementById('participant-inputs');
+            const addTeamBox = document.getElementById('add-team-box');
+
+            if (mode === 'group') {
+                btnGroup.className = "px-6 py-2.5 rounded-xl font-bold text-sm bg-blue-600 text-white shadow-lg transition flex items-center space-x-2";
+                btnSingle.className = "px-6 py-2.5 rounded-xl font-bold text-sm bg-slate-700 text-slate-300 shadow-lg transition flex items-center space-x-2";
+                subtitle.innerText = "Thiết lập thông tin các đội chơi";
+                addTeamBox.style.display = 'flex';
+                container.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-blue-600 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0">1</span>
+                        <input type="text" value="Đội 1" class="participant-input w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500 font-semibold text-sm" placeholder="Nhập tên...">
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-purple-600 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0">2</span>
+                        <input type="text" value="Đội 2" class="participant-input w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500 font-semibold text-sm" placeholder="Nhập tên...">
+                    </div>
+                `;
+            } else {
+                btnSingle.className = "px-6 py-2.5 rounded-xl font-bold text-sm bg-teal-600 text-white shadow-lg transition flex items-center space-x-2";
+                btnGroup.className = "px-6 py-2.5 rounded-xl font-bold text-sm bg-slate-700 text-slate-300 shadow-lg transition flex items-center space-x-2";
+                subtitle.innerText = "Nhập họ và tên học sinh làm bài";
+                addTeamBox.style.display = 'none';
+                container.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-teal-600 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0"><i class="fa-solid fa-user"></i></span>
+                        <input type="text" value="Học sinh" class="participant-input w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-teal-500 font-semibold text-sm" placeholder="Họ và tên của bạn...">
+                    </div>
+                `;
+            }
+        }
+
+        function addParticipantInput() {
+            const container = document.getElementById('participant-inputs');
+            const count = container.children.length + 1;
+            const div = document.createElement('div');
+            div.className = 'flex items-center space-x-2';
+            const colorClass = count % 2 === 0 ? 'bg-purple-600' : 'bg-blue-600';
+            div.innerHTML = `
+                <span class="${colorClass} w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0">${count}</span>
+                <input type="text" value="Đội ${count}" class="participant-input w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500 font-semibold text-sm" placeholder="Nhập tên...">
+                <button onclick="this.parentElement.remove()" class="text-red-400 hover:text-red-300 px-2"><i class="fa-solid fa-trash"></i></button>
+            `;
+            container.appendChild(div);
+        }
+
+        function startGame() {
+            getAudioContext();
+
+            const inputs = document.querySelectorAll('.participant-input');
+            participants = [];
+            inputs.forEach((input, index) => {
+                const name = input.value.trim() || (gameMode === 'group' ? `Đội ${index + 1}` : `Học sinh`);
+                participants.push({ name: name, score: 0, correctCount: 0 });
+            });
+
+            if (participants.length === 0) {
+                return;
+            }
+
+            questions = [...originalQuestions].sort(() => Math.random() - 0.5);
+
+            document.getElementById('setup-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            document.getElementById('total-q-num').innerText = questions.length;
+            
+            if (gameMode === 'single') {
+                document.getElementById('turn-label').innerText = 'Học sinh:';
+            } else {
+                document.getElementById('turn-label').innerText = 'Lượt của:';
+            }
+
+            currentIndex = 0;
+            currentQuestionIndex = 0;
+            loadQuestion();
+        }
+
+        function updateScoreboardMini() {
+            const container = document.getElementById('scoreboard-mini');
+            container.innerHTML = '';
+            
+            if (gameMode === 'single') {
+                container.style.display = 'none';
+                document.getElementById('current-participant-badge').innerText = participants[0].name;
+            } else {
+                container.style.display = 'grid';
+                participants.forEach((p, idx) => {
+                    const isCurrent = idx === currentIndex;
+                    const div = document.createElement('div');
+                    div.className = `p-2 rounded-lg border ${isCurrent ? 'border-teal-400 bg-teal-950/40 pulse-glow' : 'border-slate-700 bg-slate-900/40'}`;
+                    div.innerHTML = `
+                        <div class="text-xs text-slate-300 truncate font-semibold">${p.name}</div>
+                        <div class="text-lg font-extrabold text-teal-300">${p.score} đ</div>
+                    `;
+                    container.appendChild(div);
+                });
+                document.getElementById('current-participant-badge').innerText = participants[currentIndex].name;
+            }
+        }
+
+        function loadQuestion() {
+            const q = questions[currentQuestionIndex];
+            document.getElementById('current-q-num').innerText = currentQuestionIndex + 1;
+            document.getElementById('question-text').innerHTML = q.question;
+
+            const typeText = q.type === 'mcq' ? 'Trắc nghiệm 4 lựa chọn' : q.type === 'tf' ? 'Câu hỏi Đúng / Sai' : 'Câu hỏi Trả lời ngắn';
+            document.getElementById('question-badge').innerText = `${q.lesson} • Cấp độ: ${q.level} • ${typeText}`;
+
+            updateScoreboardMini();
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            if (q.type === 'mcq') {
+                const gridDiv = document.createElement('div');
+                gridDiv.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+
+                let currentOptions = [...q.options].sort(() => Math.random() - 0.5);
+                const letters = ['A', 'B', 'C', 'D'];
+
+                currentOptions.forEach((opt, idx) => {
+                    const cleanText = opt.text.replace(/^[A-D]\.\s*/, '');
+                    const btn = document.createElement('button');
+                    btn.className = 'bg-slate-900/90 hover:bg-slate-700 border border-slate-700 hover:border-blue-500 p-4 rounded-xl text-left transition flex items-start space-x-3 group shadow';
+                    
+                    btn.innerHTML = `
+                        <span class="bg-slate-800 text-teal-400 font-bold px-2.5 py-1 rounded-lg text-sm shrink-0">${letters[idx]}</span>
+                        <span class="text-slate-100 font-medium text-sm md:text-base my-auto">${cleanText}</span>
+                    `;
+
+                    btn.onclick = () => selectAnswer(opt.isCorrect, q.rationale);
+                    gridDiv.appendChild(btn);
+                });
+                optionsContainer.appendChild(gridDiv);
+            } else if (q.type === 'tf') {
+                const gridDiv = document.createElement('div');
+                gridDiv.className = 'grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto pt-2';
+
+                const btnTrue = document.createElement('button');
+                btnTrue.className = 'bg-emerald-900/80 hover:bg-emerald-700 border border-emerald-500 p-5 rounded-2xl text-center font-bold text-xl transition shadow-lg flex items-center justify-center space-x-3';
+                btnTrue.innerHTML = `<i class="fa-solid fa-check text-2xl text-emerald-400"></i> <span>ĐÚNG</span>`;
+                btnTrue.onclick = () => selectAnswer(q.correctBool === true, q.rationale);
+
+                const btnFalse = document.createElement('button');
+                btnFalse.className = 'bg-red-900/80 hover:bg-red-700 border border-red-500 p-5 rounded-2xl text-center font-bold text-xl transition shadow-lg flex items-center justify-center space-x-3';
+                btnFalse.innerHTML = `<i class="fa-solid fa-xmark text-2xl text-red-400"></i> <span>SAI</span>`;
+                btnFalse.onclick = () => selectAnswer(q.correctBool === false, q.rationale);
+
+                gridDiv.appendChild(btnTrue);
+                gridDiv.appendChild(btnFalse);
+                optionsContainer.appendChild(gridDiv);
+            } else if (q.type === 'sa') {
+                const boxDiv = document.createElement('div');
+                boxDiv.className = 'max-w-md mx-auto space-y-4 pt-2 text-center';
+                boxDiv.innerHTML = `
+                    <div class="text-xs text-slate-400">Nhập đáp án (chữ số, số thập phân hoặc số nguyên) rồi nhấn Gửi:</div>
+                    <div class="flex space-x-2">
+                        <input id="sa-input" type="text" class="w-full bg-slate-900 border border-teal-500 rounded-xl px-4 py-3 text-white text-center font-bold text-lg focus:outline-none focus:ring-2 focus:ring-teal-400" placeholder="Nhập câu trả lời...">
+                        <button id="sa-submit-btn" class="bg-teal-600 hover:bg-teal-500 text-white font-bold px-6 py-3 rounded-xl shadow transition">Gửi</button>
+                    </div>
+                `;
+                optionsContainer.appendChild(boxDiv);
+
+                const inputEl = document.getElementById('sa-input');
+                const submitBtn = document.getElementById('sa-submit-btn');
+
+                const handleSaSubmit = () => {
+                    const userAns = inputEl.value.trim().toLowerCase().replace(/\s+/g, '').replace(',', '.');
+                    const targetAns = q.correctAnswer.trim().toLowerCase().replace(/\s+/g, '').replace(',', '.');
+                    const isCorrect = (userAns === targetAns);
+                    selectAnswer(isCorrect, `${q.rationale} (Đáp án chuẩn: <b>${q.correctAnswer}</b>)`);
+                };
+
+                submitBtn.onclick = handleSaSubmit;
+                inputEl.addEventListener('keyup', (e) => {
+                    if (e.key === 'Enter') handleSaSubmit();
+                });
+                setTimeout(() => inputEl.focus(), 100);
+            }
+
+            renderMath(document.getElementById('game-screen'));
+        }
+
+        function selectAnswer(isCorrect, rationaleText) {
+            document.getElementById('game-screen').classList.add('hidden');
+            const feedbackScreen = document.getElementById('feedback-screen');
+            feedbackScreen.classList.remove('hidden');
+
+            const title = document.getElementById('feedback-title');
+            const icon = document.getElementById('feedback-icon');
+            const rationale = document.getElementById('feedback-rationale');
+
+            if (isCorrect) {
+                playCorrectSound();
+                participants[currentIndex].score += 10;
+                participants[currentIndex].correctCount++;
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
+                title.innerText = gameMode === 'single' ? "Chính Xác! (+10 điểm)" : `${participants[currentIndex].name} Trả Lời Chính Xác! (+10 điểm)`;
+                title.className = "text-2xl font-bold text-emerald-400";
+            } else {
+                playIncorrectSound();
+                if (gameMode === 'group') {
+                    participants[currentIndex].score = Math.max(0, participants[currentIndex].score - 5);
+                }
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-400"></i>';
+                title.innerText = gameMode === 'single' ? "Chưa Chính Xác!" : `${participants[currentIndex].name} Chưa Chính Xác! (-5 điểm)`;
+                title.className = "text-2xl font-bold text-red-400";
+            }
+
+            rationale.innerHTML = rationaleText;
+            renderMath(feedbackScreen);
+        }
+
+        function nextQuestion() {
+            if (gameMode === 'group') {
+                currentIndex = (currentIndex + 1) % participants.length;
+            }
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < questions.length) {
+                document.getElementById('feedback-screen').classList.add('hidden');
+                document.getElementById('game-screen').classList.remove('hidden');
+                loadQuestion();
+            } else {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            document.getElementById('feedback-screen').classList.add('hidden');
+            document.getElementById('end-screen').classList.remove('hidden');
+
+            const container = document.getElementById('final-scoreboard');
+            container.innerHTML = '';
+
+            if (gameMode === 'single') {
+                const student = participants[0];
+                document.getElementById('end-subtitle').innerText = `Học sinh: ${student.name}`;
+                
+                const score10 = ((student.correctCount / questions.length) * 10).toFixed(1);
+
+                const div = document.createElement('div');
+                div.className = 'bg-slate-900 border border-teal-500 p-6 rounded-2xl space-y-3 text-center';
+                div.innerHTML = `
+                    <div class="text-slate-400 text-sm">Tổng số câu đúng: <b class="text-white">${student.correctCount} / ${questions.length}</b></div>
+                    <div class="text-4xl font-extrabold text-teal-300">${score10} <span class="text-xl font-bold text-slate-300">/ 10 Điểm</span></div>
+                    <div class="text-xs text-slate-400 pt-2">${Number(score10) >= 8 ? '🌟 Xuất sắc! Bạn nắm rất vững toàn diện kiến thức Giữa Học Kỳ I Hóa học 12.' : Number(score10) >= 5 ? '👍 Khá tốt! Hãy rà soát lại các câu tính toán sản xuất xăng E5 và phân tử khối triglyceride nhé.' : '📖 Hãy ôn tập kĩ lại lý thuyết ester, lipid, xà phòng và carbohydrate nhé!'}</div>
+                `;
+                container.appendChild(div);
+            } else {
+                document.getElementById('end-subtitle').innerText = "Trò chơi đã kết thúc! Tổng kết điểm số các đội chơi.";
+                const sortedList = [...participants].sort((a, b) => b.score - a.score);
+                sortedList.forEach((p, idx) => {
+                    const div = document.createElement('div');
+                    div.className = `flex justify-between items-center p-4 rounded-xl border ${idx === 0 ? 'bg-amber-500/20 border-amber-400 text-amber-300 font-bold' : 'bg-slate-900 border-slate-700 text-white'}`;
+                    div.innerHTML = `
+                        <div class="flex items-center space-x-3">
+                            <span class="w-8 h-8 rounded-full flex items-center justify-center font-bold ${idx === 0 ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-300'}">${idx + 1}</span>
+                            <span>${p.name}</span>
+                        </div>
+                        <span class="text-xl font-extrabold">${p.score} điểm</span>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            confetti({
+                particleCount: 160,
+                spread: 85,
+                origin: { y: 0.6 }
+            });
+        }
+
+        function restartGame() {
+            document.getElementById('end-screen').classList.add('hidden');
+            document.getElementById('setup-screen').classList.remove('hidden');
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMath(document.body);
+        });
+    </script>
+</body>
+</html>
